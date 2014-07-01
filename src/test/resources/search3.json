@@ -1,0 +1,4 @@
+{
+    "$elMatch:company.contacts:name":"David Welch",
+    "company.id" : 1
+}

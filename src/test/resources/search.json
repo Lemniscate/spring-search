@@ -1,0 +1,10 @@
+{
+    "$or" : [
+        { "email": "bah@blah.com" },
+        { "email": "blah@blah.com" }
+        , {
+            "$like:firstName": "%Demo%",
+            "$like:lastName": "%User%"
+        }
+    ]
+}
