@@ -25,4 +25,5 @@ public class LikeSpecification<E> extends BaseSpecification<E> {
     public String toString() {
         return String.format("LIKE(%s - %s)", key, value);
     }
+
 }

@@ -1,18 +1,14 @@
 package com.github.lemniscate.spring.search;
 
 import com.github.lemniscate.spring.search.spec.AndOrSpecification;
-import com.github.lemniscate.spring.search.spec.ElMatchSpecification;
-import com.github.lemniscate.spring.search.spec.LikeSpecification;
-import com.github.lemniscate.spring.search.spec.MatchSpecification;
 import com.google.common.base.CaseFormat;
+import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
-import org.springframework.util.Assert;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,23 +18,26 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OperationParser<T>{
 
+    public static final String COMMAND_TOKEN = "~";
+
     private final ConversionService conversionService;
 
     public Specification<T> parse(Map<String, Object> search) {
-        Specifications spec = Specifications.where(new AndOrSpecification( SearchOperator.AND ));
+        List<Specification> specs = Lists.newArrayList();
         for(String key : search.keySet()){
             Specification<T> s = parse(key, search.get(key));
-            spec = spec.and(s);
+            specs.add(s);
         }
+
+        AndOrSpecification spec = new AndOrSpecification(SearchOperator.AND, specs);
         return spec;
     }
 
     public Specification<T> parse(String key, Object payload){
-        String originalKey = key;
         SearchOperator op;
         String[] params = new String[0];
 
-        if( key.startsWith("$") ){
+        if( key.startsWith( COMMAND_TOKEN ) ){
             key = key.substring(1);
 
             // parse any params and set key to
@@ -57,44 +56,6 @@ public class OperationParser<T>{
         }
 
         log.info("Looking for {} handler with params {} and payload {}", op, params, payload);
-        return handle(op, params, payload);
+        return op.getSpecification(params, payload, this, conversionService);
     }
-
-    private Specification<T> handle(SearchOperator op, String[] params, Object payload) {
-        switch(op){
-            case AND:
-            case OR:
-
-                Assert.isAssignable(Collection.class, payload.getClass(), "Must be a collection here");
-                // probably should make sure our collection contains maps
-
-
-                Specifications spec = Specifications.where(new AndOrSpecification(op));
-                for(Map<String, Object> map : (Collection<Map<String, Object>>) payload){
-                    Specification<?> s = parse(map);
-                    if( op == SearchOperator.AND ){
-                        spec = spec.and(s);
-                    }else{
-                        spec = spec.or(s);
-                    }
-                }
-
-                return spec;
-
-            case MATCH:
-                return new MatchSpecification<T>(params[0], payload, conversionService);
-
-            case LIKE:
-                return new LikeSpecification<T>(params[0], payload, conversionService);
-
-            case EL_MATCH:
-                return new ElMatchSpecification<T>(params[0], params[1], payload, conversionService);
-
-
-        }
-
-        throw new IllegalStateException("Unhandled operation: " + op);
-    }
-
-
 }

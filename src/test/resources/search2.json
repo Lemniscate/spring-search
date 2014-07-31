@@ -1,14 +1,14 @@
 {
     "active": true,
-    "$like:firstName": "%Demo%",
-    "$like:lastName": "%User%",
-    "$or" : [
+    "~like:firstName": "%Demo%",
+    "~like:lastName": "%User%",
+    "~or" : [
         { "email": "bah@blah.com" },
         { "address.state": "Utah" },
         {
-            "$or": [
-                {"$like:address.city": "%slc%"},
-                {"$like:address.city": "%salt lake city%"}
+            "~or": [
+                {"~like:address.city": "%slc%"},
+                {"~like:address.city": "%salt lake city%"}
             ]
         }
     ]
