@@ -9,8 +9,11 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.SpringApplicationContextLoader;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -20,6 +23,9 @@ import org.springframework.util.Assert;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 @Slf4j
@@ -35,6 +41,24 @@ public class SearchTest {
 //    @EnableJpaRepositories(basePackageClasses = UserRepository.class)
     public static class Config {// extends DataConfig{
         // TODO point to a local h2 instance
+
+        @Bean
+        public ConversionService conversionService(){
+            DefaultConversionService s = new DefaultConversionService();
+            s.addConverter(new Converter<String, Date>() {
+
+                @Override
+                public Date convert(String source) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    try {
+                        return sdf.parse(source);
+                    } catch (ParseException e) {
+                        return null;
+                    }
+                }
+            });
+            return s;
+        }
     }
 
     private Map<String, Object> search, search3;
