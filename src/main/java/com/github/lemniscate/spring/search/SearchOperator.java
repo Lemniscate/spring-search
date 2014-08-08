@@ -16,7 +16,7 @@ import java.util.Map;
 * @Author dave 6/29/14 5:18 PM
 */
 public enum SearchOperator {
-    MATCH, LIKE, MIN, MAX, NOT, BETWEEN,
+    MATCH, LIKE, MIN, MAX, NOT, BETWEEN, NULL, NOT_NULL,
     EL_MATCH, EL_LIKE, EL_MIN, EL_MAX, EL_NOT,
 
     OR, AND;
@@ -56,6 +56,12 @@ public enum SearchOperator {
 
             case BETWEEN:
                 return new BetweenSpecification<T>(params[0], payload, conversionService);
+
+            case NULL:
+                return new NullCheckSpecification<T>((String) payload, true, conversionService);
+
+            case NOT_NULL:
+                return new NullCheckSpecification<T>((String) payload, false, conversionService);
 
             //endregion
 

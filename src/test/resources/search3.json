@@ -1,5 +1,7 @@
 {
     "~elMatch:company.contacts:name":"David Welch",
     "company.id" : 1,
-    "~between:birthdate": ["1986-06-17", "1986-06-19"]
+    "~between:birthdate": ["1986-06-17", "1986-06-19"],
+    "~null": "lastName",
+    "~notNull": "firstName"
 }
