@@ -18,7 +18,7 @@ public class LikeSpecification<E> extends BaseSpecification<E> {
     @Override
     public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         Path<?> prop = resolveProperty(root, key);
-        return cb.like((Path<String>) prop, value.toString());
+        return cb.like(cb.lower((Path<String>) prop), value.toString().toLowerCase());
     }
 
     @Override
