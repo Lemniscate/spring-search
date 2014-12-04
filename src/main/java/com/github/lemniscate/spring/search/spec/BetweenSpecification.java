@@ -19,7 +19,8 @@ public class BetweenSpecification<E> extends BaseSpecification<E> {
     @Override
     public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         Path<?> prop = resolveProperty(root, key);
-        return cb.between((Path<Date>) prop, new Date(), new Date());
+        DateRange range = (DateRange) this.value;
+        return cb.between((Path<Date>) prop, range.getLower(), range.getUpper());
     }
 
     @Override
