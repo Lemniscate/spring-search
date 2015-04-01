@@ -18,16 +18,20 @@ public class AndOrSpecification<T> implements Specification<T> {
 
     private final SearchOperator op;
     private final List<Specification> specifications;
+    private final boolean distinct;
 
-    public AndOrSpecification(SearchOperator op, List<Specification> specifications) {
+    public AndOrSpecification(SearchOperator op, List<Specification> specifications, boolean distinct) {
         Assert.notNull(op, "Op required");
         Assert.isTrue(op == SearchOperator.AND || op == SearchOperator.OR, "Unsupported op " + op);
         this.op = op;
         this.specifications = specifications;
+        this.distinct = distinct;
     }
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+        query.distinct(distinct);
+
         List<Predicate> predicates = Lists.newArrayList();
         for(Specification s : specifications){
             predicates.add( s.toPredicate(root, query, cb) );

@@ -23,13 +23,17 @@ public class OperationParser<T>{
     private final ConversionService conversionService;
 
     public Specification<T> parse(Map<String, Object> search) {
+        return parse(search, false);
+    }
+
+    public Specification<T> parse(Map<String, Object> search, boolean distinct) {
         List<Specification> specs = Lists.newArrayList();
         for(String key : search.keySet()){
             Specification<T> s = parse(key, search.get(key));
             specs.add(s);
         }
 
-        AndOrSpecification spec = new AndOrSpecification(SearchOperator.AND, specs);
+        AndOrSpecification spec = new AndOrSpecification(SearchOperator.AND, specs, distinct);
         return spec;
     }
 

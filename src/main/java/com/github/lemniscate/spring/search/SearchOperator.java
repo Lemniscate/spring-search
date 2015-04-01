@@ -35,7 +35,7 @@ public enum SearchOperator {
                     Specification<?> s = parser.parse(map);
                     specs.add(s);
                 }
-                AndOrSpecification<T> spec = new AndOrSpecification<T>(this, specs);
+                AndOrSpecification<T> spec = new AndOrSpecification<T>(this, specs, false);
                 return spec;
 
             //region Direct Properties
